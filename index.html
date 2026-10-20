@@ -148,7 +148,8 @@ const tg = window.Telegram && window.Telegram.WebApp;
 if (tg) { try { tg.ready(); tg.expand(); tg.setHeaderColor('#120f19'); tg.setBackgroundColor('#120f19'); if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {} }
 const params = new URLSearchParams(location.search);
 if (params.get('api')) CONFIG.apiUrl = params.get('api');
-const initData = (tg && tg.initData) || params.get('initData') || '';
+let _hash = ''; try { _hash = new URLSearchParams(location.hash.slice(1)).get('tgWebAppData') || ''; } catch (e) {}
+const initData = (tg && tg.initData) || _hash || params.get('initData') || '';
 const haptic = (t) => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(t || 'light'); } catch (e) {} };
 
 const $ = (s) => document.querySelector(s);
@@ -376,7 +377,7 @@ $('#nav').addEventListener('click', (ev) => { const b = ev.target.closest('butto
 
 /* ====== ARRANQUE ====== */
 (async function () {
-  if (!initData) { $('#carregarMsg').textContent = 'Abre o jogo pelo Telegram, no botão do bot.'; return; }
+  if (!initData) { $('#carregarMsg').textContent = 'Abre o jogo pelo Telegram, no botão do bot. [diag: script=' + (window.Telegram ? 'sim' : 'não') + ', plataforma=' + (tg && tg.platform) + ', hash=' + location.hash.length + ']'; return; }
   try {
     const nome = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : '';
     const r = await api('perfil', { nome });
