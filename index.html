@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Guardiões da Biblioteca</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120f19;--painel:#1d1828;--borda:#3a2f52;--ouro:#f2b84b;--texto:#efe4cc;--suave:#b8aec8;--verde:#6fcf8f;--azul:#7fb0f5;--vermelho:#e2574c;--roxo:#b07cf0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--texto);font-family:'Alegreya Sans',sans-serif;overflow:hidden}
+.px{font-family:'Press Start 2P',monospace}
+.pix{image-rendering:pixelated}
+button{font:inherit;color:inherit;cursor:pointer}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;max-width:520px;margin:0 auto}
+#topo{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:8px}
+#topo .nome{font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:var(--painel);border:2px solid var(--borda);font-size:14px;font-weight:700;white-space:nowrap}
+#ecras{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 14px 14px}
+.ecra{display:none}.ecra.on{display:block}
+#nav{display:grid;grid-template-columns:repeat(4,1fr);background:#1a1524;border-top:2px solid var(--borda)}
+#nav button{background:none;border:none;padding:10px 0 12px;font-size:12px;color:var(--suave);display:flex;flex-direction:column;align-items:center;gap:4px;min-height:56px}
+#nav button.on{color:var(--ouro)}
+.cartao{background:var(--painel);border:2px solid var(--borda);border-radius:8px;padding:12px;margin-bottom:12px}
+.titulo{font-family:'Press Start 2P',monospace;font-size:10px;letter-spacing:1px;color:var(--suave);margin:14px 0 8px}
+.barra{height:10px;background:#2c2440;border:2px solid #000}.barra>i{display:block;height:100%;transition:width .4s steps(6)}
+.grelha{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.attr{background:#17131f;border-radius:6px;padding:8px 10px;font-size:14px;display:flex;justify-content:space-between}
+.attr b{color:var(--ouro)}
+.slot{display:flex;align-items:center;gap:10px;background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:8px 10px;min-height:52px}
+.r-comum{border-color:#8a8f99!important}.r-incomum{border-color:#5fb27a!important}.r-raro{border-color:#5a8fe0!important}.r-epico{border-color:#a066e0!important}.r-lendario{border-color:#f0a030!important}
+.t-comum{color:#b4bcc6}.t-incomum{color:#8fd6a8}.t-raro{color:#7fb0f5}.t-epico{color:#c9a6f7}.t-lendario{color:#f6b25e}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.item small{color:var(--suave);font-size:13px}
+.bt{border:3px solid #000;border-radius:4px;padding:0 12px;min-height:44px;font-family:'Press Start 2P',monospace;font-size:10px;box-shadow:inset -3px -3px 0 rgba(0,0,0,.35)}
+.bt.ouro{background:#e0b860;color:#1a1408}.bt.roxo{background:#7b52b5;color:#fff}.bt.azul{background:#4f7fbf;color:#fff}.bt.cinza{background:#3a2f52;color:#efe4cc}.bt.verm{background:#c4433a;color:#fff}
+.bt:disabled{opacity:.45}
+/* mapa */
+#mapaBox{position:relative;height:560px;border:3px solid var(--borda);border-radius:6px;overflow:hidden;background:#1a1528}
+#mapaBox>img.fundo{position:absolute;left:50%;top:0;width:360px;height:600px;transform:translateX(-50%)}
+.no{position:absolute;width:56px;height:56px;border:none;padding:0;background:url(assets/nodes.png) no-repeat;background-size:336px 56px;image-rendering:pixelated}
+.no.boss{width:78px;height:78px;background:url(assets/boss_node.png) no-repeat;background-size:78px 78px}
+.no.bloq{filter:grayscale(.75) brightness(.5)}
+.no.feito{filter:brightness(.6) saturate(.5)}
+.no.pronto{animation:pronto 1s steps(4) infinite}
+@keyframes pronto{0%,100%{transform:translateY(0);filter:drop-shadow(0 0 0 #f6c453)}50%{transform:translateY(-4px);filter:drop-shadow(0 0 7px #f6c453)}}
+.ponto{position:absolute;width:6px;height:6px;box-shadow:1px 1px 0 #000;pointer-events:none}
+#heroi{position:absolute;width:60px;height:72px;background:url(assets/hero.png) no-repeat;background-size:240px 72px;image-rendering:pixelated;animation:hmini 1s steps(2) infinite;transition:left .45s steps(9),top .45s steps(9);pointer-events:none}
+@keyframes hmini{from{background-position:0 0}to{background-position:-120px 0}}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(8,6,12,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+#modal.on{display:flex}
+#modal .caixa{width:100%;max-width:420px;background:#17131f;border:3px solid var(--ouro);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px}
+#modal h3{margin:0;font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.6;color:var(--ouro)}
+/* combate */
+#combate{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10;max-width:520px;margin:0 auto}
+#combate.on{display:flex}
+#palco{position:relative;margin:10px 12px 0;height:340px;border:3px solid var(--borda);border-radius:6px;overflow:hidden;background:#17132a}
+#palco .fundo{position:absolute;inset:-12px;width:calc(100% + 24px);height:calc(100% + 24px);object-fit:cover;filter:brightness(.36) saturate(.8) blur(1.5px)}
+#monWrap{position:absolute;right:12px;top:30px;width:190px;height:180px;display:flex;align-items:flex-end;justify-content:center}
+#mon{image-rendering:pixelated;transform-origin:50% 100%;animation:mbob 1.2s steps(4) infinite}
+@keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.mimicsheet{width:112px;height:104px;background:url(assets/mimic.png) no-repeat;background-size:560px 104px;animation:msheet .9s steps(4) infinite!important}
+@keyframes msheet{from{background-position:0 0}to{background-position:-448px 0}}
+#heroC{position:absolute;left:18px;bottom:20px;width:120px;height:144px;background:url(assets/hero.png) no-repeat;background-size:480px 144px;image-rendering:pixelated;animation:hidle 1s steps(2) infinite}
+@keyframes hidle{from{background-position:0 0}to{background-position:-240px 0}}
+.hp{position:absolute;padding:7px;border:3px solid #efe4cc;border-radius:4px;background:rgba(18,15,25,.9);font-size:9px;display:flex;flex-direction:column;gap:5px}
+.pop{position:absolute;font-family:'Press Start 2P',monospace;text-shadow:2px 2px 0 #000;pointer-events:none;animation:pop 1s steps(8) forwards}
+@keyframes pop{0%{opacity:0;transform:translateY(8px)}15%{opacity:1;transform:translateY(-6px)}70%{opacity:1;transform:translateY(-26px)}100%{opacity:0;transform:translateY(-38px)}}
+.fx{position:absolute;pointer-events:none;image-rendering:pixelated}
+.hit{animation:hit .5s steps(1)}
+@keyframes hit{0%,100%{filter:none;transform:translateX(0)}10%{filter:brightness(4)}25%{filter:none;transform:translateX(7px)}40%{filter:brightness(4);transform:translateX(-7px)}55%{filter:none;transform:translateX(3px)}}
+.hurt{animation:hurt .6s steps(1)}
+@keyframes hurt{0%,100%{opacity:1;transform:translateX(0)}15%{opacity:0;transform:translateX(-6px)}30%{opacity:1;transform:translateX(6px)}45%{opacity:0}60%{opacity:1}75%{opacity:0}}
+.dash{animation:dash .55s steps(10)}
+@keyframes dash{0%,100%{transform:translate(0,0)}35%,55%{transform:translate(130px,-90px)}}
+.lunge{animation:lunge .55s steps(8)}
+@keyframes lunge{0%,100%{transform:translate(0,0)}30%,55%{transform:translate(-50px,30px) rotate(-5deg)}}
+.glow{animation:glow 1s steps(4)}
+@keyframes glow{0%,100%{filter:none}30%,70%{filter:drop-shadow(0 0 8px #7fb0f5) brightness(1.35)}}
+.morre{animation:morre 1.2s steps(1) forwards!important}
+@keyframes morre{0%,20%,40%,60%{opacity:1}10%,30%,50%,70%,100%{opacity:0}}
+#log{margin:10px 12px 0;padding:10px 12px;border:3px solid var(--borda);border-radius:6px;background:#17131f;min-height:74px;font-size:15px;color:#d6cce4}
+#acoes{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+#acoes .bt{min-height:54px;font-size:11px}
+#erro{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#6e1a12;color:#ffd0c8;padding:10px 14px;border-radius:6px;font-size:14px;display:none;z-index:30;max-width:90%}
+#carregar{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:var(--bg);z-index:40;text-align:center;padding:24px}
+</style>
+</head>
+<body>
+<div id="carregar"><div class="px" style="color:var(--ouro);font-size:14px;line-height:1.8">GUARDIÕES<br>DA BIBLIOTECA</div><div id="carregarMsg" style="color:var(--suave)">A abrir a biblioteca…</div></div>
+
+<div id="app">
+  <div id="topo">
+    <div class="nome" id="tNome">—</div>
+    <div style="display:flex;gap:6px">
+      <span class="chip" title="Velas"><img src="assets/vela.png" class="pix" width="10" height="14" alt=""> <span id="tVelas">0</span></span>
+      <span class="chip" title="Moedas" style="color:var(--ouro)">● <span id="tMoedas">0</span></span>
+    </div>
+  </div>
+  <div id="ecras">
+    <section class="ecra on" id="e-perfil"></section>
+    <section class="ecra" id="e-mapa"></section>
+    <section class="ecra" id="e-mochila"></section>
+    <section class="ecra" id="e-ranking"></section>
+  </div>
+  <nav id="nav">
+    <button data-e="perfil" class="on">◆<span>Perfil</span></button>
+    <button data-e="mapa">✦<span>Mapa</span></button>
+    <button data-e="mochila">▣<span>Mochila</span></button>
+    <button data-e="ranking">▲<span>Ranking</span></button>
+  </nav>
+</div>
+
+<div id="combate">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px 0">
+    <span class="px" style="font-size:10px;color:#e07a6a" id="cTitulo">COMBATE</span>
+    <span class="px" style="font-size:10px;color:var(--ouro)" id="cTurno">TURNO 1</span>
+  </div>
+  <div id="palco">
+    <img class="fundo" id="cFundo" alt="">
+    <div id="monWrap"><div id="mon"></div></div>
+    <div id="heroC"></div>
+    <div class="hp" style="left:8px;top:8px;width:160px"><div style="display:flex;justify-content:space-between" class="px"><span id="cMonNome">—</span><span id="cMonNv" style="color:var(--azul)"></span></div><div class="barra"><i id="cMonHp" style="background:var(--vermelho);width:100%"></i></div><span class="px" style="color:#c9b08a;font-size:8px" id="cMonTxt"></span></div>
+    <div class="hp" style="right:8px;bottom:8px;width:170px"><div class="px">TU</div><div class="barra"><i id="cJHp" style="background:var(--verde);width:100%"></i></div><div class="barra" style="height:7px"><i id="cJTinta" style="background:var(--azul);width:100%"></i></div><span class="px" style="color:#c9b08a;font-size:8px" id="cJTxt"></span></div>
+  </div>
+  <div id="log"></div>
+  <div id="acoes">
+    <button class="bt ouro" data-a="ataque">ATACAR</button>
+    <button class="bt roxo" data-a="feitico">FEITIÇO · 25</button>
+    <button class="bt azul" data-a="defender">DEFENDER</button>
+    <button class="bt cinza" data-a="fugir">FUGIR</button>
+  </div>
+</div>
+
+<div id="modal"><div class="caixa" id="modalCaixa"></div></div>
+<div id="erro"></div>
+
+<script>
+/* ====== CONFIG ====== */
+const CONFIG = {
+  // URL público do servidor do bot (Railway). As rotas ficam em /guardioes/api/…
+  apiUrl: 'https://rxbot-production-0047.up.railway.app'
+};
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { try { tg.ready(); tg.expand(); tg.setHeaderColor('#120f19'); tg.setBackgroundColor('#120f19'); if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {} }
+const params = new URLSearchParams(location.search);
+if (params.get('api')) CONFIG.apiUrl = params.get('api');
+const initData = (tg && tg.initData) || params.get('initData') || '';
+const haptic = (t) => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(t || 'light'); } catch (e) {} };
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const GEN = { fantasia: 'Fantasia', terror: 'Terror', romance: 'Romance', policial: 'Policial', fc: 'Ficção Científica', aventura: 'Aventura', dark: 'Dark Romance', spicy: 'Spicy' };
+const RAR = { comum: 'Comum', incomum: 'Incomum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
+const SLOT = { arma: 'Arma', escudo: 'Escudo', capa: 'Capa', anel: 'Anel', reliquia: 'Relíquia' };
+const ATTR = { atq: 'Ataque', def: 'Defesa', prec: 'Precisão', esq: 'Esquiva', crit: 'Crítico', contra: 'Contra-ataque', vida: 'Vida', tinta: 'Tinta' };
+let P = null, ecraAtual = 'perfil', ocupado = false;
+
+/* ====== API ====== */
+async function api(acao, dados) {
+  const r = await fetch(CONFIG.apiUrl.replace(/\/$/, '') + '/guardioes/api/' + acao, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(Object.assign({ initData }, dados || {}))
+  });
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok || !j || j.ok === false) throw new Error((j && j.erro) || ('Erro ' + r.status));
+  if (j.perfil) aplicarPerfil(j.perfil);
+  return j;
+}
+function erro(msg) { const e = $('#erro'); e.textContent = msg; e.style.display = 'block'; clearTimeout(erro.t); erro.t = setTimeout(() => e.style.display = 'none', 3500); }
+
+/* ====== PERFIL ====== */
+function fmtAttr(k, v) { return k === 'def' || k === 'crit' ? Math.round(v * 100) + '%' : v; }
+function aplicarPerfil(p) {
+  P = p;
+  $('#tNome').textContent = p.nome; $('#tVelas').textContent = p.velas + '/' + p.velas_max; $('#tMoedas').textContent = p.moedas.toLocaleString('pt-PT');
+  desenharPerfil(); desenharMochila(); if (ecraAtual === 'mapa') desenharMapa();
+}
+function desenharPerfil() {
+  const p = P, a = p.atributos, eq = {};
+  p.itens.filter(i => i.equipado).forEach(i => eq[i.slot] = i);
+  const pct = Math.round(p.xp / p.xp_proximo * 100);
+  const vela = p.velas < p.velas_max ? `Próxima vela em ${Math.ceil(p.proxima_vela_s / 60)} min` : 'Velas cheias';
+  $('#e-perfil').innerHTML = `
+  <div class="cartao">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:20px;font-weight:800">${esc(p.nome)}</div><span class="chip" style="background:var(--ouro);color:#1a1408;border-color:#000">Nv. ${p.nivel}</span></div>
+    <div style="margin:10px 0 6px;display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--suave)">Experiência</span><b style="color:var(--ouro)">${p.xp.toLocaleString('pt-PT')} / ${p.xp_proximo.toLocaleString('pt-PT')}</b></div>
+    <div class="barra"><i style="width:${pct}%;background:var(--ouro)"></i></div>
+    <div style="margin-top:8px;font-size:13px;color:var(--suave)">${vela} · Afinidade: <b style="color:var(--texto)">${GEN[a.genero] || a.genero}</b></div>
+  </div>
+  <div class="titulo">PERÍCIAS</div>
+  <div class="grelha"><div class="attr">⚔️ Combate <b>${p.pericias.combate}/99</b></div><div class="attr" style="opacity:.5">🗡️ Furto <b>em breve</b></div></div>
+  <div class="titulo">ATRIBUTOS</div>
+  <div class="grelha">${['vida', 'atq', 'def', 'prec', 'crit', 'contra'].map(k => `<div class="attr">${ATTR[k]} <b>${fmtAttr(k, a[k])}</b></div>`).join('')}</div>
+  <div class="titulo">EQUIPAMENTO</div>
+  <div class="grelha">${Object.keys(SLOT).map(s => { const i = eq[s]; return `<div class="slot ${i ? 'r-' + i.raridade : ''}"><div><div style="font-size:12px;color:var(--suave)">${SLOT[s]}</div><div style="font-weight:700" class="${i ? 't-' + i.raridade : ''}">${i ? esc(i.nome) : '—'}</div></div></div>`; }).join('')}</div>`;
+}
+function descItem(i) { return Object.entries(i.attrs).map(([k, v]) => `${ATTR[k]} +${fmtAttr(k, v)}`).join(' · '); }
+function desenharMochila() {
+  const it = P.itens;
+  $('#e-mochila').innerHTML = `<div class="titulo">MOCHILA · ${it.length}</div>` + it.map(i => `
+    <div class="item r-${i.raridade}">
+      <div style="min-width:0"><div style="font-weight:800" class="t-${i.raridade}">${esc(i.nome)}${i.equipado ? ' <small>· equipado</small>' : ''}</div>
+      <small>${RAR[i.raridade]} · ${SLOT[i.slot]} · ${GEN[i.genero] || ''}</small><br><small>${descItem(i)}</small></div>
+      <div style="display:flex;flex-direction:column;gap:6px">${i.equipado ? '' : `<button class="bt ouro" data-eq="${i.id}">USAR</button><button class="bt cinza" data-vd="${i.id}">${i.venda}●</button>`}</div>
+    </div>`).join('');
+}
+$('#e-mochila').addEventListener('click', async (ev) => {
+  const b = ev.target.closest('button'); if (!b || ocupado) return; ocupado = true;
+  try { if (b.dataset.eq) { await api('equipar', { item_id: +b.dataset.eq }); haptic('medium'); } else if (b.dataset.vd) { await api('vender', { item_id: +b.dataset.vd }); haptic(); } }
+  catch (e) { erro(e.message); } finally { ocupado = false; }
+});
+
+/* ====== MAPA ====== */
+const ICON = { inicio: 0, combate: 1, elite: 2, tesouro: 3, evento: 4, descanso: 5 };
+const W = 340, H = 560;
+function posicoes(m) {
+  const linhas = {}; m.nos.forEach(n => (linhas[n.linha] = linhas[n.linha] || []).push(n));
+  const nl = Object.keys(linhas).length, pos = {};
+  Object.values(linhas).forEach(l => l.sort((a, b) => a.col - b.col).forEach((n, i) => {
+    pos[n.id] = { x: W * (i + 1) / (l.length + 1), y: H - 45 - (H - 120) * n.linha / (nl - 1) };
+  }));
+  return pos;
+}
+function desenharMapa() {
+  const m = P.mapa, pos = posicoes(m), atual = m.nos.find(n => n.id === m.atual), prontos = atual ? atual.seguintes : [];
+  let html = `<div class="titulo" style="display:flex;justify-content:space-between"><span>${esc(m.nome.toUpperCase())}</span><span>${P.velas} VELAS</span></div><div id="mapaBox"><img class="fundo pix" src="assets/mapa_bg.png" alt="">`;
+  const off = 'calc(50% - ' + (W / 2) + 'px)';
+  m.nos.forEach(n => n.seguintes.forEach(s => {
+    const a = pos[n.id], b = pos[s], dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy), passos = Math.floor((len - 70) / 13);
+    const andado = m.visitados.includes(n.id) && m.visitados.includes(s), aberto = n.id === m.atual;
+    for (let i = 0; i <= passos; i++) { const t = (34 + i * 13) / len; html += `<span class="ponto" style="left:calc(${off} + ${a.x + dx * t - 3}px);top:${a.y + dy * t - 3}px;background:${andado ? '#f6c453' : aberto ? '#fff0a8' : '#4a4060'}"></span>`; }
+  }));
+  m.nos.forEach(n => {
+    const p = pos[n.id], boss = n.tipo === 'boss', t = boss ? 78 : 56;
+    let cls = 'bloq'; if (m.feitos.includes(n.id) || (m.visitados.includes(n.id) && n.id !== m.atual)) cls = 'feito'; if (n.id === m.atual) cls = ''; if (prontos.includes(n.id)) cls = 'pronto';
+    html += `<button class="no ${boss ? 'boss' : ''} ${cls}" data-no="${n.id}" aria-label="${n.tipo}" style="left:calc(${off} + ${p.x - t / 2}px);top:${p.y - t / 2}px;${boss ? '' : `background-position:${-ICON[n.tipo] * 56}px 0`}"></button>`;
+  });
+  const pa = pos[m.atual];
+  html += `<div id="heroi" style="left:calc(${off} + ${pa.x - 8}px);top:${pa.y - 66}px"></div></div>
+  <div class="cartao" style="margin-top:12px;font-size:15px;color:var(--suave)">Toca num nó a brilhar para avançar (1 vela). Os combates, enigmas e tesouros resolvem-se lá.</div>`;
+  $('#e-mapa').innerHTML = html;
+}
+$('#e-mapa').addEventListener('click', async (ev) => {
+  const b = ev.target.closest('[data-no]'); if (!b || ocupado) return;
+  const m = P.mapa, atual = m.nos.find(n => n.id === m.atual);
+  if (!atual.seguintes.includes(b.dataset.no)) { const n = m.nos.find(x => x.id === b.dataset.no); erro(n.monstro ? `${n.monstro.nome} · ainda não chegaste aqui.` : 'Ainda não chegaste aqui.'); return; }
+  ocupado = true; haptic();
+  try {
+    const r = await api('avancar', { destino: b.dataset.no });
+    if (r.combate) abrirCombate(r.combate);
+    else if (r.enigma) mostrarEnigma(r.enigma);
+    else if (r.tipo === 'tesouro') modal(`<h3>TESOURO</h3><div>Encontraste <b style="color:var(--ouro)">${r.moedas} moedas</b>${r.item ? ` e <b class="t-${r.item.raridade}">${esc(r.item.nome)}</b> (${RAR[r.item.raridade]})` : ''}.</div>`);
+    else if (r.tipo === 'descanso') modal(`<h3>DESCANSO</h3><div>Lês umas páginas à luz da vela e recuperas <b>${r.velas_ganhas} velas</b>.</div>`);
+  } catch (e) { erro(e.message); } finally { ocupado = false; }
+});
+function modal(html, botoes) {
+  $('#modalCaixa').innerHTML = html + (botoes || '<button class="bt ouro" data-fechar>CONTINUAR</button>');
+  $('#modal').classList.add('on');
+}
+$('#modal').addEventListener('click', async (ev) => {
+  const b = ev.target.closest('button'); if (!b) return;
+  if (b.dataset.fechar !== undefined) { $('#modal').classList.remove('on'); return; }
+  if (b.dataset.resp !== undefined && !ocupado) {
+    ocupado = true;
+    try {
+      const r = await api('responder', { resposta: +b.dataset.resp });
+      modal(r.certo ? `<h3>CERTO!</h3><div>+${r.xp} XP e +1 vela.</div>` : `<h3>ERRADO…</h3><div>O pergaminho desfaz-se em pó.</div>`);
+      haptic(r.certo ? 'heavy' : 'rigid');
+    } catch (e) { erro(e.message); } finally { ocupado = false; }
+  }
+});
+function mostrarEnigma(e) {
+  modal(`<h3>ENIGMA</h3><div style="font-size:17px">${esc(e.pergunta)}</div>`, e.respostas.map((t, i) => `<button class="bt cinza" style="font-family:'Alegreya Sans';font-size:16px;font-weight:700;text-align:left" data-resp="${i}">${esc(t)}</button>`).join(''));
+}
+
+/* ====== COMBATE ====== */
+const SPR = {
+  mimico: { cls: 'mimicsheet' }, traca: { cls: 'mimicsheet' },
+  espectro: { img: 'assets/espectro.png', w: 112, h: 163, fundo: 'assets/fundo_espectro.jpg' },
+  rei: { img: 'assets/rei.png', w: 161, h: 145 }
+};
+let C = null;
+function abrirCombate(c) {
+  C = c; const s = SPR[c.inimigo.sprite] || SPR.mimico, mon = $('#mon');
+  mon.className = ''; mon.removeAttribute('style'); mon.innerHTML = '';
+  if (s.cls) mon.classList.add(s.cls, 'pix'); else mon.innerHTML = `<img src="${s.img}" width="${s.w}" height="${s.h}" class="pix" alt="${esc(c.inimigo.nome)}" style="filter:${c.inimigo.sprite === 'espectro' ? 'drop-shadow(0 0 6px rgba(176,124,240,.6))' : 'none'}">`;
+  $('#cFundo').src = s.fundo || 'assets/fundo_mimico.jpg';
+  $('#cTitulo').textContent = (c.tipo === 'boss' ? 'BOSS · ' : c.tipo === 'elite' ? 'ELITE · ' : '') + P.mapa.nome.toUpperCase();
+  const nm = c.inimigo.nome.toUpperCase(); $('#cMonNome').textContent = nm.length <= 14 ? nm : nm.split(' ').slice(0, 2).join(' ').slice(0, 14); $('#cMonNv').textContent = 'Nv' + c.inimigo.nivel;
+  $('#log').innerHTML = esc(c.intro);
+  atualizarBarras(c.jogador, c.inimigo.vida, c.inimigo.vida_max); $('#cTurno').textContent = 'TURNO ' + (c.turno + 1);
+  $('#combate').classList.add('on'); bloquear(false);
+}
+function atualizarBarras(j, vi, vmax) {
+  $('#cMonHp').style.width = (vi / vmax * 100) + '%'; $('#cMonTxt').textContent = vi + '/' + vmax;
+  $('#cJHp').style.width = (j.vida / j.vida_max * 100) + '%'; $('#cJTinta').style.width = (j.tinta / j.tinta_max * 100) + '%';
+  $('#cJTxt').textContent = j.vida + '/' + j.vida_max + ' · ' + j.tinta + ' tinta';
+}
+function bloquear(b) { document.querySelectorAll('#acoes button').forEach(x => x.disabled = b); }
+function anima(el, cls, ms) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), ms); }
+function pop(texto, cor, onde) {
+  const p = document.createElement('div'); p.className = 'pop'; p.textContent = texto; p.style.color = cor; p.style.fontSize = '15px';
+  Object.assign(p.style, onde); $('#palco').appendChild(p); setTimeout(() => p.remove(), 1100);
+}
+function fx(src, w, h, frames, de, para, ms) {
+  const e = document.createElement('div'); e.className = 'fx';
+  Object.assign(e.style, { width: w + 'px', height: h + 'px', left: de.x + 'px', top: de.y + 'px', background: `url(${src}) no-repeat`, backgroundSize: (w * frames) + 'px ' + h + 'px', transition: `left ${ms}ms steps(8), top ${ms}ms steps(8)` });
+  $('#palco').appendChild(e); let f = 0; const it = setInterval(() => { f = (f + 1) % frames; e.style.backgroundPosition = (-w * f) + 'px 0'; }, 70);
+  requestAnimationFrame(() => { e.style.left = para.x + 'px'; e.style.top = para.y + 'px'; });
+  setTimeout(() => { clearInterval(it); e.remove(); }, ms + 60);
+}
+const linha = (t) => { const l = $('#log'); l.innerHTML = (l.innerHTML.split('<br>').slice(-2).concat([esc(t)])).join('<br>'); };
+async function animar(evs, nome) {
+  const palco = $('#palco').getBoundingClientRect(), mx = palco.width - 120, my = 80, hx = 70, hy = 230;
+  for (const e of evs) {
+    if (e.quem === 'jogador') {
+      if (e.tipo === 'sem_tinta') { linha('Não tens tinta suficiente.'); continue; }
+      if (e.tipo === 'fugir') { linha(e.ok ? 'Fugiste pelas estantes.' : 'Tentaste fugir… sem sucesso.'); await sleep(400); continue; }
+      if (e.tipo === 'defender') { anima($('#heroC'), 'glow', 1000); linha('Ergues a defesa (+15 tinta).'); await sleep(500); continue; }
+      if (e.tipo === 'ataque') { anima($('#heroC'), 'dash', 550); await sleep(220); fx('assets/slash.png', 96, 96, 3, { x: mx - 50, y: my }, { x: mx - 50, y: my }, 260); }
+      if (e.tipo === 'feitico') { for (let i = 0; i < 3; i++) fx('assets/orb.png', 36, 36, 2, { x: hx + 60, y: hy - 30 + i * 12 }, { x: mx, y: my + 30 }, 420); await sleep(430); }
+      if (e.tipo === 'contra') { fx('assets/slash.png', 96, 96, 3, { x: mx - 50, y: my }, { x: mx - 50, y: my }, 260); await sleep(150); }
+      if (e.falhou) { pop('FALHOU', '#b8aec8', { right: '60px', top: '40px' }); linha('Falhaste o golpe.'); }
+      else { anima($('#mon'), 'hit', 500); pop((e.critico ? 'CRIT -' : '-') + e.dano, e.critico ? '#ffcf4a' : e.tipo === 'feitico' ? '#e3d2ff' : '#fff7dc', { right: '70px', top: '40px' }); haptic(e.critico ? 'heavy' : 'light');
+        linha((e.tipo === 'contra' ? 'Contra-ataque: ' : e.tipo === 'feitico' ? 'Orbes de Fantasia: ' : 'Golpeias: ') + e.dano + ' de dano' + (e.afinidade > 1 ? ' (super eficaz!)' : e.afinidade < 1 ? ' (pouco eficaz)' : '') + '.'); }
+      $('#cMonHp').style.width = (e.vida_inimigo / C.inimigo.vida_max * 100) + '%'; $('#cMonTxt').textContent = e.vida_inimigo + '/' + C.inimigo.vida_max;
+      await sleep(550);
+    } else {
+      anima($('#monWrap'), 'lunge', 550); await sleep(150);
+      fx('assets/ink.png', 42, 42, 2, { x: mx - 30, y: my + 60 }, { x: hx + 20, y: hy - 20 }, 400); await sleep(420);
+      if (e.falhou) { pop('ESQUIVA', '#b8aec8', { left: '40px', top: '190px' }); linha(`${nome} falha o ataque.`); }
+      else { anima($('#heroC'), 'hurt', 600); pop('-' + e.dano, '#ff7a6e', { left: '50px', top: '190px' }); haptic('rigid'); linha(`${nome} ${e.texto}: ${e.dano} de dano.`); }
+      await sleep(500);
+    }
+  }
+}
+$('#acoes').addEventListener('click', async (ev) => {
+  const b = ev.target.closest('button'); if (!b || ocupado || !C) return;
+  ocupado = true; bloquear(true);
+  try {
+    const r = await api('combater', { acao: b.dataset.a });
+    await animar(r.eventos, C.inimigo.nome);
+    atualizarBarras(r.estado.jogador, r.estado.inimigo_vida, C.inimigo.vida_max);
+    $('#cTurno').textContent = 'TURNO ' + (r.combate ? r.combate.turno + 1 : '—');
+    if (r.fim) await terminarCombate(r);
+  } catch (e) { erro(e.message); } finally { ocupado = false; if (C) bloquear(false); }
+});
+async function terminarCombate(r) {
+  if (r.fim === 'vitoria') {
+    $('#mon').classList.add('morre'); await sleep(1100);
+    const rc = r.recompensa;
+    modal(`<h3>${r.ala_concluida ? 'ALA CONCLUÍDA!' : 'VITÓRIA!'}</h3><div>+${rc.xp} XP · +${rc.moedas} moedas${rc.niveis ? `<br><b style="color:var(--ouro)">Subiste ao nível ${P.nivel}!</b>` : ''}${rc.item ? `<br>Drop: <b class="t-${rc.item.raridade}">${esc(rc.item.nome)}</b> (${RAR[rc.item.raridade]})` : ''}</div>`);
+  } else if (r.fim === 'derrota') { $('#heroC').classList.add('morre'); await sleep(1100); modal('<h3>DERROTA…</h3><div>Voltas ao nó anterior. Melhora o equipamento e tenta outra vez.</div>'); }
+  else modal('<h3>FUGISTE</h3><div>Voltas ao nó anterior.</div>');
+  $('#heroC').classList.remove('morre'); $('#combate').classList.remove('on'); C = null; mostrarEcra('mapa');
+}
+
+/* ====== RANKING / NAV ====== */
+async function desenharRanking() {
+  $('#e-ranking').innerHTML = '<div class="titulo">TOP GUARDIÕES</div><div class="cartao">A carregar…</div>';
+  try { const r = await api('ranking'); const med = ['🥇', '🥈', '🥉'];
+    $('#e-ranking').innerHTML = '<div class="titulo">TOP GUARDIÕES</div>' + r.top.map((x, i) => `<div class="item" style="${x.eu ? 'border-color:var(--ouro)' : ''}"><span>${med[i] || (i + 1) + '.'} <b>${esc(x.nome)}</b></span><span class="chip">Nv. ${x.nivel}</span></div>`).join('');
+  } catch (e) { $('#e-ranking').innerHTML = '<div class="cartao">' + esc(e.message) + '</div>'; }
+}
+function mostrarEcra(n) {
+  ecraAtual = n; document.querySelectorAll('.ecra').forEach(e => e.classList.toggle('on', e.id === 'e-' + n));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.e === n));
+  if (n === 'mapa') desenharMapa(); if (n === 'ranking') desenharRanking();
+}
+$('#nav').addEventListener('click', (ev) => { const b = ev.target.closest('button'); if (b) { mostrarEcra(b.dataset.e); haptic(); } });
+
+/* ====== ARRANQUE ====== */
+(async function () {
+  if (!initData) { $('#carregarMsg').textContent = 'Abre o jogo pelo Telegram, no botão do bot.'; return; }
+  try {
+    const nome = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : '';
+    const r = await api('perfil', { nome });
+    aplicarPerfil(r.perfil || r);
+    $('#carregar').style.display = 'none';
+    if (P.combate) abrirCombate(P.combate);
+  } catch (e) { $('#carregarMsg').textContent = 'Não consegui ligar ao servidor (' + e.message + ').'; }
+})();
+</script>
+</body>
+</html>
