@@ -172,6 +172,14 @@ button{font:inherit;color:inherit;cursor:pointer}
 .banner .spr img{max-width:100%;max-height:100%;image-rendering:pixelated}
 .banner .bn{position:absolute;right:10px;bottom:8px;z-index:1;text-align:right;text-shadow:2px 2px 0 #000;font-weight:800;font-size:17px}
 .banner .bn small{display:block;font-weight:500;font-size:13px;color:#d9cdb8}
+#cartas .pc.vazio{border-style:dashed;filter:none;opacity:.55;pointer-events:none}#cartas .pc.vazio .arte{background:repeating-linear-gradient(45deg,#1d1828 0 12px,#17131f 12px 24px)}
+#pagEsc{display:flex;align-items:center;justify-content:center;gap:14px}
+#pagEsc .seta{background:#17131f;border:2px solid var(--borda);border-radius:6px;width:46px;height:38px;color:var(--ouro);font-size:14px}
+#pagEsc .seta:disabled{opacity:.3}
+#pagEsc .pontos{display:flex;gap:7px}#pagEsc .pontos i{width:9px;height:9px;background:#3a2f52;border:2px solid #000}#pagEsc .pontos i.on{background:var(--ouro)}
+#cartas.desl-d{animation:deslD .28s steps(6)}#cartas.desl-e{animation:deslE .28s steps(6)}
+@keyframes deslD{from{transform:translateX(40px);opacity:.2}to{transform:none;opacity:1}}
+@keyframes deslE{from{transform:translateX(-40px);opacity:.2}to{transform:none;opacity:1}}
 /* rodopio + explosão de luz */
 #rito{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;perspective:900px;overflow:hidden;background:rgba(6,4,10,0)}
 #rito.on{display:flex;animation:ritoBg .45s forwards}
@@ -262,8 +270,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 </div>
 <div id="escolha">
   <h1>ESCOLHE A TUA<br>GUARDIÃ</h1>
-  <div class="sub">Toca numa personagem para a conheceres.</div>
+  <div class="sub">Toca numa personagem · desliza para ver mais.</div>
   <div id="cartas"></div>
+  <div id="pagEsc" class="pagesc"></div>
   <div style="display:flex;gap:10px"><button class="bt cinza" id="btVoltar" style="min-height:52px;font-size:10px;flex:0 0 34%">◀ VOLTAR</button><button class="bt ouro" id="btEscolher" disabled style="min-height:52px;font-size:11px;flex:1">ESCOLHER</button></div>
 </div>
 <div id="rito"></div>
@@ -293,8 +302,13 @@ const SLOT = { arma: 'Arma', escudo: 'Escudo', capa: 'Capa', anel: 'Anel', reliq
 const ATTR = { atq: 'Ataque', def: 'Defesa', prec: 'Precisão', esq: 'Esquiva', crit: 'Crítico', contra: 'Contra-ataque', vida: 'Vida', tinta: 'Tinta' };
 let P = null, ecraAtual = 'perfil', ocupado = false;
 const PERS = {
-  bruxa: { nome: 'A Bruxa Arquivista', sprite: 'assets/p_bruxa.png', arte: 'assets/arte_bruxa.jpg', w: 204, h: 228 },
-  leitora: { nome: 'A Leitora do Lume', sprite: 'assets/p_leitora.png', arte: 'assets/arte_leitora.jpg', w: 115, h: 226 }
+  bruxa: { nome: 'A Bruxa Arquivista', sprite: 'assets/p_bruxa.png', arte: 'assets/arte_bruxa.jpg', w: 204, h: 228, cor: '#c25bff' },
+  leitora: { nome: 'A Leitora do Lume', sprite: 'assets/p_leitora.png', arte: 'assets/arte_leitora.jpg', w: 115, h: 226, cor: '#ff9a3c' },
+  inspetor: { nome: 'O Inspetor das Margens', sprite: 'assets/p_inspetor.png', arte: 'assets/arte_inspetor.jpg', w: 76, h: 170, cor: '#6fe08f' },
+  cartografa: { nome: 'A Cartógrafa Errante', sprite: 'assets/p_cartografa.png', arte: 'assets/arte_cartografa.jpg', w: 103, h: 197, cor: '#ffb347' },
+  dama: { nome: 'A Dama das Cartas de Amor', sprite: 'assets/p_dama.png', arte: 'assets/arte_dama.jpg', w: 157, h: 346, cor: '#ff8fb8' },
+  herdeira: { nome: 'A Herdeira da Ribeira', sprite: 'assets/p_herdeira.png', arte: 'assets/arte_herdeira.jpg', w: 155, h: 328, cor: '#d4294a' },
+  detetive: { nome: 'A Detetive da Chuva', sprite: 'assets/p_detetive.png', arte: 'assets/arte_detetive.jpg', w: 101, h: 246, cor: '#e0435a' }
 };
 const persAtual = () => PERS[P && P.personagem] || PERS.leitora;
 function tamanhoHeroi(h) { const p = persAtual(); return { w: Math.round(h * p.w / p.h), h }; }
@@ -464,7 +478,7 @@ async function animar(evs, nome) {
     if (e.quem === 'jogador') {
       if (e.tipo === 'sem_tinta') { linha('Não tens tinta suficiente.'); continue; }
       if (e.tipo === 'fugir') { linha(e.ok ? 'Fugiste pelas estantes.' : 'Tentaste fugir… sem sucesso.'); await sleep(400); continue; }
-      if (e.tipo === 'defender') { anima($('#heroC'), 'glow', 1000); linha('Ergues a defesa (+15 tinta).'); await sleep(500); continue; }
+      if (e.tipo === 'defender') { anima($('#heroC'), 'glow', 1000); linha('Ergues a defesa (+15 tinta' + (e.cura ? `, +${e.cura} vida` : '') + ').'); if (e.cura) { pop('+' + e.cura, '#6fcf8f', { left: '50px', top: '190px' }); $('#cJHp').style.width = (e.vida_jogador / C.jogador.vida_max * 100) + '%'; } await sleep(500); continue; }
       if (e.tipo === 'ataque') { anima($('#heroC'), 'dash', 550); await sleep(220); fx('assets/slash.png', 96, 96, 3, { x: mx - 50, y: my }, { x: mx - 50, y: my }, 260); }
       if (e.tipo === 'feitico') { for (let i = 0; i < 3; i++) fx('assets/orb.png', 36, 36, 2, { x: hx + 60, y: hy - 30 + i * 12 }, { x: mx, y: my + 30 }, 420); await sleep(430); }
       if (e.tipo === 'contra') { fx('assets/slash.png', 96, 96, 3, { x: mx - 50, y: my }, { x: mx - 50, y: my }, 260); await sleep(150); }
@@ -529,15 +543,31 @@ $('#btVoltar').addEventListener('click', () => { if (!ocupado) { $('#escolha').c
 
 /* ====== ESCOLHA DE PERSONAGEM ====== */
 let escolhida = null;
-function mostrarEscolha() {
-  escolhida = null; $('#btEscolher').disabled = true;
-  $('#cartas').innerHTML = (P.opcoes || []).map(o => { const pe = PERS[o.chave]; return `
-    <button class="pc" data-p="${o.chave}">
+let pagEsc = 0;
+const POR_PAG = 2;
+function paginasEsc() { return Math.max(1, Math.ceil((P.opcoes || []).length / POR_PAG)); }
+function desenharCartas(dir) {
+  const ops = (P.opcoes || []).slice(pagEsc * POR_PAG, pagEsc * POR_PAG + POR_PAG), n = paginasEsc();
+  $('#cartas').innerHTML = ops.map(o => { const pe = PERS[o.chave] || PERS.leitora; return `
+    <button class="pc ${o.chave === escolhida ? 'sel' : ''}" data-p="${o.chave}">
       <div class="arte" style="background-image:url(${pe.arte})"><div class="spr"><img src="${pe.sprite}" alt=""></div></div>
       <div class="info"><b>${esc(o.nome)}</b><span class="tag">${esc(GEN[o.genero] || o.genero).toUpperCase()}</span><small>${esc(o.frase)}</small><small style="color:var(--verde)">${esc(o.bonus)}</small></div>
-    </button>`; }).join('');
+    </button>`; }).join('') + (ops.length === 1 ? '<div class="pc vazio"><div class="arte"></div><div class="info"><b>🔒 Em breve</b><small>Novas guardiãs a caminho…</small></div></div>' : '');
+  if (dir) { const c = $('#cartas'); c.classList.remove('desl-e', 'desl-d'); void c.offsetWidth; c.classList.add(dir > 0 ? 'desl-d' : 'desl-e'); }
+  $('#pagEsc').innerHTML = `<button class="seta" data-pg="-1" ${pagEsc === 0 ? 'disabled' : ''}>◀</button><span class="pontos">${Array.from({ length: n }, (_, i) => `<i class="${i === pagEsc ? 'on' : ''}"></i>`).join('')}</span><button class="seta" data-pg="1" ${pagEsc >= n - 1 ? 'disabled' : ''}>▶</button>`;
+}
+function mudarPag(d) { const n = paginasEsc(), p = Math.min(n - 1, Math.max(0, pagEsc + d)); if (p !== pagEsc) { pagEsc = p; haptic(); desenharCartas(d); } }
+function mostrarEscolha() {
+  escolhida = null; pagEsc = 0; $('#btEscolher').disabled = true;
+  desenharCartas(0);
   $('#escolha').classList.add('on');
 }
+$('#pagEsc').addEventListener('click', (ev) => { const b = ev.target.closest('[data-pg]'); if (b && !ocupado) mudarPag(+b.dataset.pg); });
+(() => { let x0 = null, y0 = null; const c = $('#cartas');
+  c.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  c.addEventListener('touchend', (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) mudarPag(dx < 0 ? 1 : -1); }, { passive: true });
+})();
 $('#cartas').addEventListener('click', (ev) => {
   const b = ev.target.closest('.pc'); if (!b || ocupado) return;
   escolhida = b.dataset.p; haptic();
@@ -545,7 +575,7 @@ $('#cartas').addEventListener('click', (ev) => {
   $('#btEscolher').disabled = false;
 });
 async function rito(chave) {
-  const r = $('#rito'), pe = PERS[chave], cores = ['#fff3c0', '#ffd25e', '#ffffff', chave === 'bruxa' ? '#c25bff' : '#ff9a3c'];
+  const r = $('#rito'), pe = PERS[chave], cores = ['#fff3c0', '#ffd25e', '#ffffff', (pe.cor || '#ffd25e')];
   let fa = ''; for (let i = 0; i < 44; i++) { const ang = Math.random() * 6.283, d = 90 + Math.random() * 190; fa += `<i class="fa" style="--dx:${Math.round(Math.cos(ang) * d)}px;--dy:${Math.round(Math.sin(ang) * d)}px;background:${cores[i % cores.length]};animation-delay:${Math.round(Math.random() * 120)}ms"></i>`; }
   r.className = ''; r.innerHTML = `<div class="halo"></div><div class="raios"></div><div class="anel"></div><img class="fig" src="${pe.sprite}" alt="">${fa}<div class="flash"></div><div class="bemv">${esc(pe.nome.toUpperCase())}<br><span style="color:var(--texto)">ENTRA NA BIBLIOTECA</span></div>`;
   r.classList.add('on'); haptic('medium');
