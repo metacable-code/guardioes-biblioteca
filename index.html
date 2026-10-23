@@ -20,7 +20,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:var(--painel);border:2px solid var(--borda);font-size:14px;font-weight:700;white-space:nowrap}
 #ecras{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 14px 14px}
 .ecra{display:none}.ecra.on{display:block}
-#nav{display:grid;grid-template-columns:repeat(4,1fr);background:#1a1524;border-top:2px solid var(--borda)}
+#nav{display:grid;grid-template-columns:repeat(5,1fr);background:#1a1524;border-top:2px solid var(--borda)}
 #nav button{background:none;border:none;padding:10px 0 12px;font-size:12px;color:var(--suave);display:flex;flex-direction:column;align-items:center;gap:4px;min-height:56px}
 #nav button.on{color:var(--ouro)}
 .cartao{background:var(--painel);border:2px solid var(--borda);border-radius:8px;padding:12px;margin-bottom:12px}
@@ -88,6 +88,44 @@ button{font:inherit;color:inherit;cursor:pointer}
 #carregar{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:var(--bg);z-index:40;text-align:center;padding:24px}
 
 
+.oo{position:relative;display:inline-block}
+.oo i{position:absolute;left:.12em;top:-.38em;width:.76em;height:.26em;background:linear-gradient(currentColor,currentColor) 0 .11em/.24em .15em no-repeat,linear-gradient(currentColor,currentColor) .26em 0/.24em .15em no-repeat,linear-gradient(currentColor,currentColor) .52em .11em/.24em .15em no-repeat}
+
+/* sala de leitura */
+.lstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.lstats div{background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:6px 4px;text-align:center;font-size:12px;color:var(--suave)}
+.lstats b{display:block;font-size:17px;color:var(--ouro)}
+.subtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.subtabs button{background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:10px;font-family:'Press Start 2P',monospace;font-size:9px;color:var(--suave)}
+.subtabs button.on{border-color:var(--ouro);color:var(--ouro)}
+.modos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.modos button{background:#17131f;border:2px solid var(--borda);border-radius:20px;padding:7px 11px;font-size:14px;font-weight:700;color:var(--texto)}
+.modos button.on{background:#3b2a12;border-color:var(--ouro);color:var(--ouro)}
+.qcard{background:var(--painel);border:2px solid var(--borda);border-radius:8px;padding:14px;margin-bottom:12px}
+.qcard .qm{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--roxo);margin-bottom:10px;letter-spacing:1px}
+.qcard .qt{font-size:17px;line-height:1.4;white-space:pre-wrap;margin-bottom:12px}
+.capaq{position:relative;width:min(100%,260px);margin:0 auto 12px;border:3px solid #000;border-radius:4px;overflow:hidden;background:#000;aspect-ratio:2/3}
+.capaq img{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.capaq img.final{image-rendering:auto}
+.fase{display:flex;justify-content:space-between;align-items:center;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ouro);margin:-4px 0 6px}
+.fasebar{height:8px;background:#2c2440;border:2px solid #000;margin-bottom:12px}.fasebar>i{display:block;height:100%;background:var(--ouro);transition:width .25s linear}
+.op{display:block;width:100%;text-align:left;background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:12px;margin-bottom:8px;font-size:16px;font-weight:700;color:var(--texto);min-height:48px}
+.op:disabled{opacity:1}
+.op.certa{border-color:var(--verde);background:#16301f}.op.errada{border-color:var(--vermelho);background:#3a1714}
+.fb{border-radius:6px;padding:12px;margin-bottom:10px;font-size:15px;line-height:1.4}
+.fb.ok{background:#16301f;border:2px solid var(--verde)}.fb.nok{background:#3a1714;border:2px solid var(--vermelho)}
+.fb .rw{margin-top:8px;font-weight:800;color:var(--ouro)}
+.cromomini{display:flex;gap:10px;align-items:center;margin-top:10px;padding:8px;background:rgba(0,0,0,.25);border-radius:6px}
+.cromomini img,.cromomini .ph{width:42px;height:63px;object-fit:cover;border:2px solid #000;border-radius:3px;flex:none}
+.series{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.serie{background:#17131f;border:2px solid var(--borda);border-radius:6px;padding:8px 10px;font-size:14px}
+.serie .barra{margin-top:6px;height:8px}
+.cromos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cromo{background:#17131f;border:2px solid var(--borda);border-radius:6px;overflow:hidden;position:relative}
+.cromo img,.cromo .ph{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.ph{display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;font-size:11px;font-weight:800;color:#efe4cc;background:linear-gradient(160deg,#3a2f52,#1d1828)}
+.cromo .ct{padding:5px 6px;font-size:11.5px;font-weight:700;line-height:1.2;height:36px;overflow:hidden}
+.cromo .vz{position:absolute;right:4px;top:4px;background:var(--ouro);color:#1a1408;font-family:'Press Start 2P',monospace;font-size:7px;padding:3px 4px;border-radius:3px;border:2px solid #000}
 /* ecrã inicial */
 #inicio{position:fixed;inset:0;z-index:36;display:none;flex-direction:column;max-width:520px;margin:0 auto;background:#0d0a14;overflow:hidden}
 #inicio.on{display:flex}
@@ -106,8 +144,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 #inicio .cena::after{content:'';position:absolute;left:0;right:0;bottom:0;height:12%;background:linear-gradient(to top,#0d0a14,transparent)}
 #inicio .vp{position:absolute;z-index:1;width:4px;height:4px;background:#ffd25e;box-shadow:0 0 6px #ffd25e;opacity:0;animation:vsobe linear infinite}
 @keyframes vsobe{0%{opacity:0;transform:translateY(0)}15%{opacity:.9}100%{opacity:0;transform:translateY(-60vh)}}
-#inicio .menu{position:relative;z-index:2;padding:6px 18px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
-#inicio .menu .bt{min-height:58px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:10px}
+#inicio .menu{position:relative;z-index:2;padding:6px 18px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+#inicio .menu .bt{min-height:52px;font-size:11px;display:flex;align-items:center;justify-content:center;gap:10px}
 #inicio .menu .bt:disabled{opacity:1;background:#2a2238;color:#7d7390;border-color:#14101c}
 #inicio .quem{text-align:center;font-size:14px;color:var(--suave);min-height:18px;text-shadow:1px 1px 0 #000}
 #inicio .ver{position:absolute;right:10px;top:8px;z-index:3;font-family:'Press Start 2P',monospace;font-size:7px;color:#6d6382}
@@ -164,7 +202,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="carregar"><div class="px" style="color:var(--ouro);font-size:14px;line-height:1.8">GUARDIÕES<br>DA BIBLIOTECA</div><div id="carregarMsg" style="color:var(--suave)">A abrir a biblioteca…</div></div>
+<div id="carregar"><div class="px" style="color:var(--ouro);font-size:14px;line-height:1.8">GUARDI<span class="oo">O<i></i></span>ES<br>DA BIBLIOTECA</div><div id="carregarMsg" style="color:var(--suave)">A abrir a biblioteca…</div></div>
 
 <div id="app">
   <div id="topo">
@@ -179,10 +217,12 @@ button{font:inherit;color:inherit;cursor:pointer}
     <section class="ecra" id="e-mapa"></section>
     <section class="ecra" id="e-mochila"></section>
     <section class="ecra" id="e-ranking"></section>
+    <section class="ecra" id="e-leitura"></section>
   </div>
   <nav id="nav">
     <button data-e="perfil" class="on">◆<span>Perfil</span></button>
     <button data-e="mapa">✦<span>Mapa</span></button>
+    <button data-e="leitura">📖<span>Leitura</span></button>
     <button data-e="mochila">▣<span>Mochila</span></button>
     <button data-e="ranking">▲<span>Ranking</span></button>
   </nav>
@@ -211,11 +251,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 <div id="inicio">
   <div class="bg"></div><span class="ver">v0.3</span>
-  <div class="tit"><span class="a">GUARDIÕES</span><span class="b">DA BIBLIOTECA</span><span class="c">EXPLORA · COMBATE · COLECIONA</span></div>
+  <div class="tit"><span class="a">GUARDI<span class="oo">O<i></i></span>ES</span><span class="b">DA BIBLIOTECA</span><span class="c">EXPLORA · COMBATE · COLECIONA</span></div>
   <div class="cena"><img class="rei" src="assets/rei.png" alt=""><img class="pb" src="assets/p_bruxa.png" alt=""><img class="pl" src="assets/p_leitora.png" alt=""></div>
   <div class="menu">
     <div class="quem" id="iQuem"></div>
     <button class="bt ouro" id="btJogar">▶ JOGAR</button>
+    <button class="bt azul" id="btLeitura">📖 SALA DE LEITURA</button>
     <button class="bt roxo" id="btPers">ESCOLHER PERSONAGEM</button>
   </div>
 </div>
@@ -483,6 +524,7 @@ $('#btPers').addEventListener('click', () => {
   if (P.personagem) { erro('Já escolheste a tua personagem.'); return; }
   haptic(); mostrarEscolha();
 });
+$('#btLeitura').addEventListener('click', () => { if (!P || ocupado) return; haptic('medium'); $('#inicio').classList.remove('on'); mostrarEcra('leitura'); });
 $('#btVoltar').addEventListener('click', () => { if (!ocupado) { $('#escolha').classList.remove('on'); haptic(); } });
 
 /* ====== ESCOLHA DE PERSONAGEM ====== */
@@ -521,6 +563,92 @@ $('#btEscolher').addEventListener('click', async () => {
   finally { ocupado = false; }
 });
 
+/* ====== SALA DE LEITURA ====== */
+const MODOS_L = [[0, '🎲 Ao calhas'], [1, '📚 ou 🎤'], [2, '🤖 Existe?'], [3, '✍️ Quem escreveu'], [4, '🎭 Género'], [5, '📖 Série'], [6, '🧩 Capa']];
+const L = { sub: 'jogar', modo: 0, q: null, res: null, stats: null, fase: 0, t0: 0, timers: [], escolhida: null, aCarregar: false };
+const urlApi = (p) => CONFIG.apiUrl.replace(/\/$/, '') + p;
+function limparTimers() { L.timers.forEach(clearTimeout); L.timers = []; if (L.tick) { clearInterval(L.tick); L.tick = null; } }
+function statsHtml(s) {
+  if (!s) return '';
+  return `<div class="lstats"><div><b>${s.certas}</b>certas</div><div><b>${s.seq}🔥</b>seguidas</div><div><b>${s.cromos}</b>cromos</div><div><b>${s.premiadas_hoje}/${s.limite_dia}</b>prémios hoje</div></div>`;
+}
+function desenharLeitura() {
+  const sub = `<div class="subtabs"><button data-sub="jogar" class="${L.sub === 'jogar' ? 'on' : ''}">JOGAR</button><button data-sub="estante" class="${L.sub === 'estante' ? 'on' : ''}">ESTANTE</button></div>`;
+  if (L.sub === 'estante') { $('#e-leitura').innerHTML = statsHtml(L.stats) + sub + '<div id="estanteBox" class="cartao">A abrir a estante…</div>'; carregarEstante(); return; }
+  const modos = `<div class="modos">${MODOS_L.map(([m, n]) => `<button data-modo="${m}" class="${L.modo === m ? 'on' : ''}">${n}</button>`).join('')}</div>`;
+  let corpo = '';
+  if (!L.q) corpo = `<div class="qcard"><div class="qt">Responde a perguntas sobre os livros da biblioteca. Cada resposta certa dá <b style="color:var(--ouro)">moedas e XP</b>, e o livro entra na tua <b style="color:var(--ouro)">Estante</b>.</div><button class="bt ouro" data-l="nova" style="width:100%">${L.aCarregar ? 'A PREPARAR…' : 'COMEÇAR'}</button></div>`;
+  else corpo = cartaoPergunta();
+  $('#e-leitura').innerHTML = statsHtml(L.stats) + sub + modos + corpo;
+  if (L.q && L.q.capa && !L.res) mostrarFase();
+}
+function cartaoPergunta() {
+  const q = L.q, r = L.res;
+  let h = `<div class="qcard"><div class="qm">${esc(q.nome_modo.toUpperCase())}</div><div class="qt">${esc(q.pergunta)}</div>`;
+  if (q.capa) {
+    h += r ? `<div class="capaq"><img class="final" src="${r.capa_final ? urlApi(r.capa_final) : (L.capaImg || '')}" alt="capa"></div>`
+           : `<div class="fase"><span id="faseTxt">FASE 1 · VALE ${q.capa.pontos[0]}</span><span id="faseSeg"></span></div><div class="fasebar"><i id="faseBar" style="width:100%"></i></div><div class="capaq"><img id="capaImg" alt="capa pixelizada" src="${L.capaImg || ''}"></div>`;
+  }
+  h += q.opcoes.map((o, i) => { let c = ''; if (r) { if (i === r.correta) c = 'certa'; else if (i === L.escolhida) c = 'errada'; }
+    return `<button class="op ${c}" data-op="${i}" ${r ? 'disabled' : ''}>${esc(o)}</button>`; }).join('');
+  if (r) {
+    const rc = r.recompensa, ganhos = [];
+    if (rc.moedas) ganhos.push(`+${rc.moedas} moedas`); if (rc.xp) ganhos.push(`+${rc.xp} XP`); if (rc.bonus_seq) ganhos.push(`🔥 bónus de sequência`);
+    if (rc.niveis) ganhos.push(`⬆ subiste ao nível ${P.nivel}!`);
+    const cromo = rc.cromo ? `<div class="cromomini">${rc.cromo.capa ? `<img src="${urlApi(rc.cromo.capa)}" alt="">` : `<div class="ph">${esc(rc.cromo.titulo)}</div>`}<div><b>${rc.cromo_novo ? '🃏 Cromo novo!' : '🃏 Já tinhas este'}</b><br><span style="font-size:14px">${esc(rc.cromo.titulo)}${rc.cromo.autor ? ' · ' + esc(rc.cromo.autor) : ''}</span></div></div>` : '';
+    h += `<div class="fb ${r.certo ? 'ok' : 'nok'}"><b>${r.certo ? (rc.pontos > 1 ? `CERTO! ×${rc.pontos}` : 'CERTO!') : 'ERRADO…'}</b> ${esc(r.explicacao)}${ganhos.length ? `<div class="rw">${ganhos.join(' · ')}</div>` : (r.certo && L.stats && L.stats.premiadas_hoje >= L.stats.limite_dia ? '<div class="rw" style="color:var(--suave)">Já ganhaste os prémios de hoje; continua a encher a Estante!</div>' : '')}${cromo}</div>
+      <button class="bt ouro" data-l="nova" style="width:100%">PRÓXIMA ▶</button>`;
+  }
+  return h + '</div>';
+}
+async function novaPergunta() {
+  if (ocupado) return; ocupado = true; limparTimers(); L.aCarregar = true; L.res = null; L.escolhida = null; L.capaImg = null;
+  if (!L.q) desenharLeitura();
+  try {
+    const r = await api('leitura', L.modo ? { modo: L.modo } : {});
+    L.q = r.pergunta; L.stats = r.stats; L.fase = 0;
+    if (L.q.capa) await iniciarCapa();
+  } catch (e) { erro(e.message); } finally { ocupado = false; L.aCarregar = false; if (ecraAtual === 'leitura') { desenharLeitura(); const q = document.querySelector('#e-leitura .qcard'); if (q && L.q) q.scrollIntoView({ block: 'start' }); } }
+}
+async function pedirFase(f) {
+  try { const r = await api('leitura_capa', { fase: f }); L.capaImg = r.imagem; L.fase = r.fase; if (!L.res) { const im = $('#capaImg'); if (im) im.src = r.imagem; mostrarFase(); } haptic(); }
+  catch (e) { if (!L.res && L.q && L.q.capa) L.timers.push(setTimeout(() => pedirFase(f), 800)); }
+}
+async function iniciarCapa() {
+  const c = L.q.capa; L.t0 = Date.now();
+  const r = await api('leitura_capa', { fase: 0 }); L.capaImg = r.imagem;
+  let acc = 0; for (let f = 1; f < c.pontos.length; f++) { acc += c.segundos[f - 1]; L.timers.push(setTimeout(() => pedirFase(f), acc * 1000 + 400)); }
+  const total = c.segundos.reduce((a, b) => a + b, 0) * 1000;
+  L.tick = setInterval(() => { const b = $('#faseBar'), s = $('#faseSeg'); const passou = Date.now() - L.t0; if (b) b.style.width = Math.max(0, 100 - passou / total * 100) + '%'; if (s) s.textContent = Math.max(0, Math.ceil((total - passou) / 1000)) + ' s'; }, 250);
+}
+function mostrarFase() { const t = $('#faseTxt'); if (t && L.q && L.q.capa) t.textContent = `FASE ${L.fase + 1} · VALE ${L.q.capa.pontos[L.fase]}`; }
+async function responderLeitura(i) {
+  if (ocupado || !L.q || L.res) return; ocupado = true; L.escolhida = i;
+  try {
+    const r = await api('leitura_responder', { opcao: i });
+    limparTimers(); L.res = r; L.stats = r.stats; haptic(r.certo ? 'heavy' : 'rigid');
+    try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(r.certo ? 'success' : 'error'); } catch (e) {}
+  } catch (e) { erro(e.message); L.escolhida = null; } finally { ocupado = false; desenharLeitura(); const f = document.querySelector('#e-leitura .fb'); if (f) f.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}
+async function carregarEstante() {
+  try {
+    const r = await api('estante'); L.stats = r.stats;
+    const box = $('#estanteBox'); if (!box || L.sub !== 'estante') return;
+    const ser = r.series.length ? `<div class="titulo">SÉRIES</div><div class="series">${r.series.slice(0, 12).map(s => `<div class="serie"><div style="display:flex;justify-content:space-between"><b>${esc(s.serie)}</b><span style="color:var(--ouro)">${s.tenho}/${s.total}</span></div><div class="barra"><i style="width:${Math.round(s.tenho / s.total * 100)}%;background:${s.tenho >= s.total ? 'var(--verde)' : 'var(--ouro)'}"></i></div></div>`).join('')}</div>` : '';
+    const cr = r.cromos.length ? `<div class="cromos">${r.cromos.map(c => `<div class="cromo">${c.capa ? `<img loading="lazy" src="${urlApi(c.capa)}" alt="">` : `<div class="ph">${esc(c.titulo)}</div>`}${c.vezes > 1 ? `<span class="vz">×${c.vezes}</span>` : ''}<div class="ct">${esc(c.titulo)}</div></div>`).join('')}</div>`
+      : '<div class="cartao" style="color:var(--suave)">Ainda não tens cromos. Acerta perguntas na Sala de Leitura para encher a estante!</div>';
+    box.outerHTML = `<div class="titulo" style="display:flex;justify-content:space-between"><span>A MINHA ESTANTE</span><span>${r.cromos.length} / ${r.total_livros.toLocaleString('pt-PT')}</span></div>${ser}<div class="titulo">CROMOS</div>${cr}`;
+    const st = document.querySelector('#e-leitura .lstats'); if (st) st.outerHTML = statsHtml(L.stats);
+  } catch (e) { const box = $('#estanteBox'); if (box) box.textContent = e.message; }
+}
+$('#e-leitura').addEventListener('click', (ev) => {
+  const b = ev.target.closest('button'); if (!b) return;
+  if (b.dataset.sub) { L.sub = b.dataset.sub; haptic(); desenharLeitura(); return; }
+  if (b.dataset.modo !== undefined) { const m = +b.dataset.modo; if (m !== L.modo) { L.modo = m; haptic(); if (L.q && !L.res) { L.q = null; limparTimers(); } desenharLeitura(); } return; }
+  if (b.dataset.l === 'nova') { novaPergunta(); return; }
+  if (b.dataset.op !== undefined) responderLeitura(+b.dataset.op);
+});
+
 /* ====== RANKING / NAV ====== */
 async function desenharRanking() {
   $('#e-ranking').innerHTML = '<div class="titulo">TOP GUARDIÕES</div><div class="cartao">A carregar…</div>';
@@ -531,7 +659,7 @@ async function desenharRanking() {
 function mostrarEcra(n) {
   ecraAtual = n; document.querySelectorAll('.ecra').forEach(e => e.classList.toggle('on', e.id === 'e-' + n));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.e === n));
-  if (n === 'mapa') desenharMapa(); if (n === 'ranking') desenharRanking();
+  if (n === 'mapa') desenharMapa(); if (n === 'ranking') desenharRanking(); if (n === 'leitura') desenharLeitura();
 }
 $('#nav').addEventListener('click', (ev) => { const b = ev.target.closest('button'); if (b) { mostrarEcra(b.dataset.e); haptic(); } });
 
